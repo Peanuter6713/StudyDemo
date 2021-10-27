@@ -1,0 +1,21 @@
+﻿@using WebApplicationDemo.Utils.RazorExtension;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@Html.Img("https://img0.baidu.com/it/u=1733443898,3890161947&fm=26&fmt=auto")
+@Html.Br()
+@Html.ActionLink("LinkText", "RazorShow")
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<Hello id="123", name="aaaa"></Hello>
+***********************************
+
+<h1>bbbbb</h1>
+
+@Html.Partial("PartialView")
