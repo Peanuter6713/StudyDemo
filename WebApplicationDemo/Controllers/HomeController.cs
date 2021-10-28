@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplicationDemo.Interface;
 using WebApplicationDemo.Models;
 
 namespace WebApplicationDemo.Controllers
@@ -14,11 +15,15 @@ namespace WebApplicationDemo.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private IConfiguration _configuration;
+        private readonly IServiceA _serviceA = null;
+        private readonly IServiceB _serviceB = null;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, IServiceA serviceA, IServiceB serviceB)
         {
             _logger = logger;
             _configuration = configuration;
+            _serviceA = serviceA;
+            _serviceB = serviceB;
 
             _logger.LogWarning("HomeController Constructor ...");
         }
@@ -32,6 +37,9 @@ namespace WebApplicationDemo.Controllers
 
         public IActionResult Privacy()
         {
+
+            _serviceA.Show();
+
             return View();
         }
 
