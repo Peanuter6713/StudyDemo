@@ -6,16 +6,11 @@ using WebApplicationDemo.Interface;
 
 namespace WebApplicationDemo.Services
 {
-    public class ServiceA : IServiceA
+    public class ServiceC : IServiceC
     {
-        public ServiceA()
-        {
-            Console.WriteLine("Service A constructor");
-        }
-
         public void Show()
         {
-            Console.WriteLine("Show from A...");
+            Console.WriteLine("this is from ServiceC");
         }
     }
 }

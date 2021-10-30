@@ -1,16 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApplicationDemo.Interface;
 
 namespace WebApplicationDemo.Services
 {
     public class ServiceB : IServiceB
     {
+        IServiceA _serviceA = null;
+
+        public ServiceB(IServiceA serviceA)
+        {
+            _serviceA = serviceA;
+        }
+
+        // 方法注入
+        public void SetService(IServiceA serviceA)
+        {
+            _serviceA = serviceA;
+        }
+
         public void Show()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Service B");
         }
     }
 }

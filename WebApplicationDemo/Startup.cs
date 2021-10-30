@@ -1,3 +1,4 @@
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -44,15 +45,15 @@ namespace WebApplicationDemo
 
             // 作用域生命周期 同一个作用域获取的是同一个对象的实例；不同的作用域，获取的是不同的对象的实例
             
-            serviceCollection.AddScoped<IServiceA, ServiceA>();
-            ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
-            IServiceA serviceA = serviceProvider.GetService<IServiceA>();
-            IServiceA serviceA1 = serviceProvider.GetService<IServiceA>();
-            bool isEqual = object.ReferenceEquals(serviceA, serviceA1); // true
+            //serviceCollection.AddScoped<IServiceA, ServiceA>();
+            //ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
+            //IServiceA serviceA = serviceProvider.GetService<IServiceA>();
+            //IServiceA serviceA1 = serviceProvider.GetService<IServiceA>();
+            //bool isEqual = object.ReferenceEquals(serviceA, serviceA1); // true
 
-            ServiceProvider serviceProvider1 = serviceCollection.BuildServiceProvider();
-            IServiceA serviceA2 = serviceProvider1.GetService<IServiceA>();
-            bool isEqual1 = object.ReferenceEquals(serviceA1, serviceA2); // false
+            //ServiceProvider serviceProvider1 = serviceCollection.BuildServiceProvider();
+            //IServiceA serviceA2 = serviceProvider1.GetService<IServiceA>();
+            //bool isEqual1 = object.ReferenceEquals(serviceA1, serviceA2); // false
 
             #endregion
 
@@ -64,6 +65,56 @@ namespace WebApplicationDemo
             #endregion
 
             services.AddControllersWithViews();
+
+            #region Autofac 容器初识
+            {
+                //ContainerBuilder containerBuilder = new ContainerBuilder();
+
+                //containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+                //IContainer container = containerBuilder.Build();
+                //IServiceA serviceA3 = container.Resolve<IServiceA>(); // 获取服务
+                //serviceA3.Show();
+            }
+            #endregion
+
+            #region 构造函数注入
+            {
+                //ContainerBuilder containerBuilder = new ContainerBuilder();
+                //containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+                //containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
+                //containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+                //IContainer container = containerBuilder.Build();
+                //IServiceB serviceB = container.Resolve<IServiceB>(); 
+                //serviceB.Show();
+            }
+            #endregion
+
+            #region 属性注入
+            {
+                //ContainerBuilder containerBuilder = new ContainerBuilder();
+                //containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+                //containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
+                //containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+                //containerBuilder.RegisterType<ServiceD>().As<IServiceD>().PropertiesAutowired();
+                //IContainer container = containerBuilder.Build();
+                //IServiceD serviceD = container.Resolve<IServiceD>();
+                //serviceD.Show();
+            }
+            #endregion
+
+            #region 方法注入
+            {
+                ContainerBuilder containerBuilder = new ContainerBuilder();
+                containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+                containerBuilder.RegisterType<ServiceB>().OnActivated(e =>
+                e.Instance.SetService(e.Context.Resolve<IServiceA>())).As<IServiceB>();
+                containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+                containerBuilder.RegisterType<ServiceD>().As<IServiceD>().PropertiesAutowired();
+                IContainer container = containerBuilder.Build();
+                IServiceB serviceB = container.Resolve<IServiceB>();
+                serviceB.Show();
+            }
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
