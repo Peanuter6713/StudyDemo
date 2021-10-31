@@ -6,12 +6,17 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="Autofac.Configuration" Version="6.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Config\autofac.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Config\log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using WebApplicationDemo.Interface;
 using WebApplicationDemo.Services;
 
@@ -103,17 +104,123 @@ namespace WebApplicationDemo
             #endregion
 
             #region 方法注入
+            //{
+            //    ContainerBuilder containerBuilder = new ContainerBuilder();
+            //    containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+            //    containerBuilder.RegisterType<ServiceB>().OnActivated(e =>
+            //    e.Instance.SetService(e.Context.Resolve<IServiceA>())).As<IServiceB>();
+            //    containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+            //    containerBuilder.RegisterType<ServiceD>().As<IServiceD>().PropertiesAutowired();
+            //    IContainer container = containerBuilder.Build();
+            //    IServiceB serviceB = container.Resolve<IServiceB>();
+            //    serviceB.Show();
+            //}
+            #endregion
+
+            #region Autofac的生命周期
             {
-                ContainerBuilder containerBuilder = new ContainerBuilder();
-                containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
-                containerBuilder.RegisterType<ServiceB>().OnActivated(e =>
-                e.Instance.SetService(e.Context.Resolve<IServiceA>())).As<IServiceB>();
-                containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
-                containerBuilder.RegisterType<ServiceD>().As<IServiceD>().PropertiesAutowired();
-                IContainer container = containerBuilder.Build();
-                IServiceB serviceB = container.Resolve<IServiceB>();
-                serviceB.Show();
+                //  生命周期范围
+                //ContainerBuilder containerBuilder = new ContainerBuilder();
+                //IContainer container = containerBuilder.Build();
+                //using (var scope = container.BeginLifetimeScope())
+                //{
+
+                //}
             }
+            {
+                // 瞬时生命周期：每次获取对象都是全新的一个实例（默认的生命周期）  
+                {
+                    //ContainerBuilder containerBuilder = new ContainerBuilder();
+                    //containerBuilder.RegisterType<ServiceA>().As<IServiceA>().InstancePerDependency();
+                    //IContainer container = containerBuilder.Build();
+
+                    //IServiceA serviceA = container.Resolve<IServiceA>();
+                    //IServiceA serviceA1 = container.Resolve<IServiceA>();
+                    //bool isEqual = object.ReferenceEquals(serviceA, serviceA1); // false
+                }
+                // 单例生命周期: 在整个生命周期，对象是同一个实例
+                {
+                    //ContainerBuilder containerBuilder = new ContainerBuilder();
+                    //containerBuilder.RegisterType<ServiceA>().As<IServiceA>().SingleInstance();
+                    //IContainer container = containerBuilder.Build();
+                    //IServiceA serviceA = container.Resolve<IServiceA>(); // 获取服务
+                    //IServiceA serviceA1 = container.Resolve<IServiceA>();
+                    //bool isEqual = object.ReferenceEquals(serviceA, serviceA1); // true
+                }
+                // 每个生命周期范围一个实例 (InstancePerLifetimeScope
+                {
+                    //ContainerBuilder containerBuilder = new ContainerBuilder();
+                    //containerBuilder.RegisterType<ServiceA>().As<IServiceA>().InstancePerLifetimeScope();
+                    //IContainer container = containerBuilder.Build();
+
+                    //IServiceA serviceA = null;
+                    //IServiceA serviceA1 = null;
+                    //using (var scope = container.BeginLifetimeScope())
+                    //{
+                    //    IServiceA serviceA2 = scope.Resolve<IServiceA>();
+                    //    IServiceA serviceA3 = scope.Resolve<IServiceA>();
+                    //    bool isEqual = object.ReferenceEquals(serviceA2, serviceA3); // true
+                    //    serviceA = serviceA2;
+                    //}
+
+                    //using (var scope = container.BeginLifetimeScope())
+                    //{
+                    //    IServiceA serviceA2 = scope.Resolve<IServiceA>();
+                    //    IServiceA serviceA3 = scope.Resolve<IServiceA>();
+                    //    bool isEqual = ReferenceEquals(serviceA2, serviceA3); // true
+                    //    serviceA1 = serviceA3;
+                    //}
+                }
+                // 每个 匹配生命周期范围一个实例 （InstancePerMatchingLifetimeScope(名称))
+                {
+                    //ContainerBuilder containerBuilder = new ContainerBuilder();
+                    //containerBuilder.RegisterType<ServiceA>().As<IServiceA>().InstancePerMatchingLifetimeScope("wds");
+
+                    //IContainer container = containerBuilder.Build();
+
+                    //IServiceA serviceA = null;
+                    //IServiceA serviceA1 = null;
+                    //using (var scope = container.BeginLifetimeScope("wds"))
+                    //{
+                    //    IServiceA serviceA2 = scope.Resolve<IServiceA>();
+                    //    using (var scope1 = container.BeginLifetimeScope())
+                    //    {
+                    //        IServiceA serviceA3 = scope.Resolve<IServiceA>();
+                    //        bool isEqual1 = object.ReferenceEquals(serviceA2, serviceA3); // true
+                    //    }
+                    //    serviceA = serviceA2;
+                    //}
+
+                    //using (var scope = container.BeginLifetimeScope("wds"))
+                    //{
+                    //    IServiceA serviceA2 = scope.Resolve<IServiceA>();
+                    //    using (var scope1 = container.BeginLifetimeScope())
+                    //    {
+                    //        IServiceA serviceA3 = scope.Resolve<IServiceA>();
+                    //        bool isEqual2 = ReferenceEquals(serviceA2, serviceA3); // true
+                    //    }
+                    //    serviceA1 = serviceA2;
+                    //}
+
+                    //bool isEqual = serviceA == serviceA1;
+                }
+                // 每个请求一个实例
+                {
+                    //ContainerBuilder containerBuilder = new ContainerBuilder();
+                    //containerBuilder.RegisterType<ServiceA>().As<IServiceA>().InstancePerRequest();
+                    //IContainer container = containerBuilder.Build();
+                    //using (var scope = container.BeginLifetimeScope())
+                    //{
+                    //    IServiceA serviceA = container.Resolve<IServiceA>();
+                    //    IServiceA serviceA1 = container.Resolve<IServiceA>();
+                    //    bool isEqual = ReferenceEquals(serviceA, serviceA1);
+                    //}
+                }
+            }
+
+            #endregion
+
+            #region Autofac 配置文件
             #endregion
         }
 
