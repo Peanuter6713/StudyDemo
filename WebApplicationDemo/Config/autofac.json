@@ -1,12 +1,44 @@
 {
   "components": [
     {
-      "type": "WebApplicationDemo.Services.ServiceA,WebApplicationDemo.Services",
+      "type": "WebApplicationDemo.Services.ServiceA,WebApplicationDemo",
       "services": [
         {
-          "type":""
+          "type": "WebApplicationDemo.Interface.IServiceA,WebApplicationDemo"
         }
-      ]
+      ],
+      "instanceScope": "single-instance", // 生命周期
+      "injectProperties": true // 属性注入
+    },
+    {
+      "type": "WebApplicationDemo.Services.ServiceB,WebApplicationDemo",
+      "services": [
+        {
+          "type": "WebApplicationDemo.Interface.IServiceB,WebApplicationDemo"
+        }
+      ],
+      "instanceScope": "single-instance", // 生命周期
+      "injectProperties": true // 属性注入
+    },
+    {
+      "type": "WebApplicationDemo.Services.ServiceC,WebApplicationDemo",
+      "services": [
+        {
+          "type": "WebApplicationDemo.Interface.IServiceC,WebApplicationDemo"
+        }
+      ],
+      "instanceScope": "single-instance", // 生命周期
+      "injectProperties": true // 属性注入
+    },
+    {
+      "type": "WebApplicationDemo.Services.ServiceD,WebApplicationDemo",
+      "services": [
+        {
+          "type": "WebApplicationDemo.Interface.IServiceD,WebApplicationDemo"
+        }
+      ],
+      "instanceScope": "single-instance", // 生命周期
+      "injectProperties": true // 属性注入
     }
   ]
 

@@ -1,7 +1,9 @@
 using Autofac;
+using Autofac.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -221,6 +223,27 @@ namespace WebApplicationDemo
             #endregion
 
             #region Autofac 配置文件
+            {
+                ContainerBuilder containerBuilder = new ContainerBuilder();
+                // 可以在这里写入Autofac注入的各种
+                {
+                    // 读取配置文件，把配置关系装载到ContainerBuilder
+                    IConfigurationBuilder configuration = new ConfigurationBuilder();
+                    IConfigurationSource autofacJsonConfigSource = new JsonConfigurationSource()
+                    {
+                        Path = "Config/autofac.json",
+                        Optional = false, // 默认值FALSE， 可不写
+                        ReloadOnChange = true // 同上
+                    };
+                    configuration.Add(autofacJsonConfigSource);
+                    ConfigurationModule module = new ConfigurationModule(configuration.Build());
+                    containerBuilder.RegisterModule(module);
+                }
+                IContainer container = containerBuilder.Build();
+                IServiceA serviceA = container.Resolve<IServiceA>();
+                IServiceD serviceD = container.Resolve<IServiceD>();
+                serviceD.Show();
+            }
             #endregion
         }
 
@@ -256,6 +279,18 @@ namespace WebApplicationDemo
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        /// <summary>
+        /// 整个方法被Autofac自动调用
+        /// 负责注册各种服务
+        /// </summary>
+        public void ConfigureContainer(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+            containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
+            containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+            containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
         }
 
     }
