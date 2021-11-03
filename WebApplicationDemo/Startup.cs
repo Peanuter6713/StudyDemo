@@ -2,14 +2,19 @@ using Autofac;
 using Autofac.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using WebApplicationDemo.Interface;
 using WebApplicationDemo.Services;
+using WebApplicationDemo.Utils.AutofacExtension;
 
 namespace WebApplicationDemo
 {
@@ -245,6 +250,18 @@ namespace WebApplicationDemo
                 serviceD.Show();
             }
             #endregion
+
+            #region ServiceCollection注册的服务也可以让Autofac使用,因为Autofac在自己注册服务之前，会先把ServiceCollection中注册的服务全部接管过来
+            services.AddTransient<IServiceA, ServiceA>();
+            services.AddTransient<IServiceB, ServiceB>();
+            services.AddTransient<IServiceC, ServiceC>();
+            #endregion
+
+            #region 指定控制器实例让容器来创建
+            services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
+            #endregion
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -284,6 +301,10 @@ namespace WebApplicationDemo
         /// <summary>
         /// 整个方法被Autofac自动调用
         /// 负责注册各种服务
+        /// 
+        /// 尽管Autofac有专门的地方注册服务
+        /// 
+        /// 之前ServiceCollection注册的服务也会生效
         /// </summary>
         public void ConfigureContainer(ContainerBuilder containerBuilder)
         {
@@ -291,6 +312,12 @@ namespace WebApplicationDemo
             containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
             containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
             containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
+
+            #region 注册所有控制器的关系+控制器实例化需要的所有组件
+            Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
+
+            containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
+            #endregion
         }
 
     }
