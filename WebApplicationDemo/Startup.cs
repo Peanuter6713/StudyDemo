@@ -308,15 +308,19 @@ namespace WebApplicationDemo
         /// </summary>
         public void ConfigureContainer(ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
-            containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
-            containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
-            containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
+            //containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+            //containerBuilder.RegisterType<ServiceB>().As<IServiceB>();
+            //containerBuilder.RegisterType<ServiceC>().As<IServiceC>();
+            //containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
 
             #region 注册所有控制器的关系+控制器实例化需要的所有组件
             Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
 
             containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
+            #endregion
+
+            #region 注册单抽象多实例
+
             #endregion
         }
 
