@@ -35,6 +35,21 @@ namespace MyClient
                     }).Result;
                     accessToken = tokenResponse.AccessToken;
                 }
+
+                Console.WriteLine("带上Token去授权服务器获取用户信息");
+                Console.WriteLine(disco.UserInfoEndpoint); // 获取用户信息的API地址
+                HttpClient apiClient = new HttpClient();
+                // apiClient.SetBearerToken(accessToken);
+                var response = apiClient.GetUserInfoAsync(new UserInfoRequest()
+                {
+                    Token = accessToken,
+                    Address = disco.UserInfoEndpoint
+                }).Result;
+
+                if (!response.IsError)
+                {
+                    Console.WriteLine(response.Raw);
+                }
             }
             catch
             {
