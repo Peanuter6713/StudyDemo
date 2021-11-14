@@ -57,6 +57,7 @@ namespace Authorization.IdentityServer
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
+                // 客户端模式
                 new Client()
                 {
                     ClientId = "ClientPattern",
@@ -74,6 +75,7 @@ namespace Authorization.IdentityServer
                         "Client-ApiScope" // 必须是这里声明了Api的scope，在获取Token的时候获取到
                     }
                 },
+                // 密码模式
                 new Client
                 {
                     ClientId = "PwdPattern",
@@ -93,6 +95,33 @@ namespace Authorization.IdentityServer
                         IdentityServerConstants.StandardScopes.Address, // 必须在IdentityResources中声明过的，才能在这里使用
                     }
                 },
+                // 授权码模式
+                new Client
+                {
+                    ClientId = "CodePattern",
+                    ClientName = "MvcApplication",
+                    AllowedGrantTypes = GrantTypes.Code, // 认证模式---授权码模式
+                    RedirectUris =
+                    {
+                        "https://localhost:7001/signin-oidc", // 跳转登录到的客户端的地址
+                    },
+                    // RedirectUris = {"https://localhost:4001/auth.html"} // 跳转登出到的客户端的地址
+                    PostLogoutRedirectUris =
+                    {
+                        "https://localhost:4001/signout-callback-oidc",
+                    },
+                    ClientSecrets = {new Secret("CodePatternSecret".Sha256())},
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "Client-ApiScope"
+                    },
+                    // 允许将token通过浏览器传递
+                    AllowAccessTokensViaBrowser = true,
+                    // 是否需要同意授权，默认false
+                    RequireConsent = true
+                }
             };
 
         public static List<TestUser> Users =>

@@ -21,7 +21,7 @@ namespace Authorization.IdentityServer
         public void ConfigureServices(IServiceCollection services)
         {
             // uncomment, if you want to add an MVC-based UI
-            //services.AddControllersWithViews();
+            services.AddControllersWithViews();
 
             // 这里配置客户端模式的相关验证
 
@@ -48,17 +48,17 @@ namespace Authorization.IdentityServer
             }
 
             // uncomment if you want to add MVC
-            //app.UseStaticFiles();
-            //app.UseRouting();
-            
+            app.UseStaticFiles();
+            app.UseRouting();
+
             app.UseIdentityServer();
 
             // uncomment, if you want to add MVC
-            //app.UseAuthorization();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapDefaultControllerRoute();
-            //});
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
         }
     }
 }
