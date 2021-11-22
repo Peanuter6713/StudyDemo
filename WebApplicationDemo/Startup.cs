@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Configuration;
+using Autofac.Features.ResolveAnything;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -314,14 +315,29 @@ namespace WebApplicationDemo
             //containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
 
             #region 注册所有控制器的关系+控制器实例化需要的所有组件
-            Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
+            //Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
 
-            containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
+            //containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
             #endregion
 
             #region 注册单抽象多实例
-
+            //containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+            //containerBuilder.RegisterType<ServiceAA>().As<IServiceA>();
             #endregion
+
+            #region 单抽象多实现
+            //containerBuilder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(t =>
+            //t.IsAssignableTo<IServiceA>()));
+            //containerBuilder.RegisterModule(new AutofacModule());
+            containerBuilder.RegisterModule<AutofacModule>();
+            #endregion
+
+            // 需要分类
+            // ISerivceA 多个实现
+            // IServiceB 多个实现
+            {
+
+            }
         }
 
     }
