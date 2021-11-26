@@ -1,6 +1,8 @@
 using Autofac;
 using Autofac.Configuration;
+using Autofac.Extras.DynamicProxy;
 using Autofac.Features.ResolveAnything;
+using Common.AutofacExtension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +34,7 @@ namespace WebApplicationDemo
         public void ConfigureServices(IServiceCollection services)
         {
             #region IOC注册抽象和具体的依赖关系
-            services.AddTransient<IServiceA, ServiceA>();
+            //services.AddTransient<IServiceA, ServiceA>();
             services.AddTransient<IServiceB, ServiceB>();
             #endregion
 
@@ -246,7 +248,7 @@ namespace WebApplicationDemo
                     containerBuilder.RegisterModule(module);
                 }
                 IContainer container = containerBuilder.Build();
-                IServiceA serviceA = container.Resolve<IServiceA>();
+                //IServiceA serviceA = container.Resolve<IServiceA>();
                 IServiceD serviceD = container.Resolve<IServiceD>();
                 serviceD.Show();
             }
@@ -315,9 +317,9 @@ namespace WebApplicationDemo
             //containerBuilder.RegisterType<ServiceD>().As<IServiceD>();
 
             #region 注册所有控制器的关系+控制器实例化需要的所有组件
-            //Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
+            Type[] controllersTypeInAssembly = typeof(Startup).Assembly.GetExportedTypes().Where(type => typeof(ControllerBase).IsAssignableFrom(type)).ToArray();
 
-            //containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
+            containerBuilder.RegisterTypes(controllersTypeInAssembly).PropertiesAutowired(new CustomPropertySelector());
             #endregion
 
             #region 注册单抽象多实例
@@ -338,6 +340,15 @@ namespace WebApplicationDemo
             {
 
             }
+
+            #region Autofac支持AOP
+            //containerBuilder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource(t =>
+            //t.IsAssignableTo<IServiceA>()));
+            containerBuilder.RegisterType(typeof(CustomAutofacAop));
+            containerBuilder.RegisterType<ServiceA>().As<IServiceA>();
+            containerBuilder.RegisterType<ServiceAA>().As<IServiceA>().EnableClassInterceptors();
+            #endregion
+
         }
 
     }

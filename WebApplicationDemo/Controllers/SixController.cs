@@ -34,24 +34,47 @@ namespace WebApplicationDemo.Controllers
         //}
         #endregion
 
-        private readonly IServiceA serviceA;
 
-        private readonly ServiceA serviceA1;
-        private readonly ServiceAA serviceAA;
-        // 获取注册的多个实例
-        private readonly IEnumerable<IServiceA> serviceAList;
+        #region 单抽象多实例
+        //private readonly IServiceA serviceA;
 
-        public SixController(IServiceA serviceA, IEnumerable<IServiceA> serviceAs,
-            ServiceA serviceA1,
-            ServiceAA serviceAA)
+        //private readonly ServiceA serviceA1;
+        //private readonly ServiceAA serviceAA;
+        //// 获取注册的多个实例
+        //private readonly IEnumerable<IServiceA> serviceAList;
+
+        //public SixController(IServiceA serviceA, IEnumerable<IServiceA> serviceAs,
+        //    ServiceA serviceA1,
+        //    ServiceAA serviceAA)
+        //{
+        //    this.serviceA = serviceA;
+        //    this.serviceAList = serviceAs;
+        //    this.serviceAA = serviceAA;
+        //}
+        #endregion
+
+        #region 支持AOP
+        private readonly IServiceA _iServiceA;
+        private readonly IServiceA _iServiceAA;
+        //private readonly ServiceAA _serviceAA;
+        private readonly IEnumerable<IServiceA> _iServiceAList;
+
+        public SixController(IServiceA iServiceA, IServiceA iServiceAA, IEnumerable<IServiceA> iServiceAList)
         {
-            this.serviceA = serviceA;
-            this.serviceAList = serviceAs;
-            this.serviceAA = serviceAA;
+            _iServiceA = iServiceA;
+            _iServiceAA = iServiceAA;
+            _iServiceAList = iServiceAList;
         }
+        #endregion
 
         public IActionResult Index()
         {
+            _iServiceA.Show();
+            _iServiceAA.Show();
+            _iServiceAList.ToList()[0].Show();
+            _iServiceAList.ToList()[1].Show();
+            _iServiceAList.ToList()[2].Show();
+
             return View();
         }
 
